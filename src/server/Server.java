@@ -8,7 +8,7 @@ public class Server
 	private static QueueDB queueList = new QueueDB();
 	private static TopicsDB topicsList = new TopicsDB();
 	private static ServerSocket serverSocket = null;
-	static Socket clientSocket = null;
+	Socket clientSocket = null;
 	 
 	public Server()
 	{

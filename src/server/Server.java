@@ -13,10 +13,12 @@ public class Server
 	private ServerSocket ss;
 	private Hashtable<Socket, PrintWriter> outputStreams = new Hashtable<Socket, PrintWriter>();
 	ServerUI srvUI ;
+	QueueDB queueDb;
 	private Hashtable<String, Integer> clients = new Hashtable<String, Integer>();
 	
 	public Server( int port ) throws IOException {
 		    srvUI = new ServerUI("localhost",port);
+		    queueDb = new QueueDB();
 		    srvUI.start();
 			listen( port );
 		}
@@ -35,7 +37,7 @@ public class Server
 
 		   outputStreams.put( s, out );
 
-		   new ServerThread( this, s );
+		   new ServerThread( this, srvUI, s, queueDb);
 	   }
    }	
 

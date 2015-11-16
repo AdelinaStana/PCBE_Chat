@@ -4,20 +4,24 @@ import java.util.LinkedList;
 
 public class QueueDB
 {
-	private static LinkedList<String> queue = new LinkedList<String>();
+	private static LinkedList<QueueMessage> queue = new LinkedList<QueueMessage>();
 	private static int MAX_LENGHT = 200;
 
-	public String getContent() 
-	{
-		String msg = queue.getFirst();
+	public synchronized String getContent() 
+	{	
+		QueueMessage msg = queue.getFirst();
 		queue.removeFirst();
-		return msg;
+		return msg.getContent();
 	}
 
-	public void push(String msg)
+	public synchronized void push(QueueMessage msg)
 	{
 		if(queue.size()<=MAX_LENGHT)
-				queue.add(msg);
+			queue.add(msg);
+	}
+	
+	public int getSize(){
+		return queue.size();
 	}
  
 }

@@ -8,10 +8,14 @@ public class ServerThread extends Thread
 {
 	private Server server;
 	private Socket socket;
+	private QueueDB queueDb;
+	private ServerUI srvUI;
 	
-	public ServerThread( Server server, Socket socket ) {
+	public ServerThread( Server server, ServerUI srvUI, Socket socket, QueueDB queueDB) {
 	this.server = server;
 	this.socket = socket;
+	this.queueDb = queueDB;
+	this.srvUI = srvUI;
 	start();
 	}
 	
@@ -37,10 +41,12 @@ public class ServerThread extends Thread
   				  Message msg = protocol.processInput(s);
 	  			  if (msg.getType() == "Queue")
 	  			  {
-	  				   server.sendToSomeone(name + " : " + msg.getContent(), msg.getReciver());
+	  				  queueDb.push((QueueMessage) msg);
+	  				  server.sendToSomeone(name + " : " + msg.getContent(), msg.getReciver());
+	  				  srvUI.appendToChatBox( "QueueDB size: "+ queueDb.getSize() );
 	  			       //server.sendToAll(name + " : " + msg.getContent());
 	  			  }
-	  			  else
+	  			  else 
 	  			  {
 	  				  
 	  			  }

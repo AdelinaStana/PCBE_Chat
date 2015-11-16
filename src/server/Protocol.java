@@ -19,7 +19,7 @@ public class Protocol
     	}
     	else
     	{
-    		tMsg = new TopicMessage(listOfArgs[0],listOfArgs[1],listOfArgs[2]);
+    		tMsg = new TopicMessage(listOfArgs[0],listOfArgs[1]);
     		return tMsg;
     	}
     	

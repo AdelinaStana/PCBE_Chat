@@ -4,17 +4,23 @@ import java.util.LinkedList;
 
 public class TopicsDB 
 {
-	LinkedList<String> contents = new LinkedList<String>();
+	LinkedList<TopicMessage> contents = new LinkedList<TopicMessage>();
 	 
-	public void setTopics(String cont)
+	public synchronized void push(TopicMessage cont)
 	{
 		contents.add(cont);
 	}
 	
-	public String getContent()
+	public synchronized String getContent()
 	{
-		return contents.getLast();
+		return contents.getLast().getContent();
 	}
 	
-
+	public synchronized void cleanOld(){
+		long now = System.currentTimeMillis() / 1000L;
+		for(int i=0; i < contents.size(); i++){
+			if(now - contents.get(i).getTime() > 180000)
+				contents.remove(i);
+		}
+	}
 }

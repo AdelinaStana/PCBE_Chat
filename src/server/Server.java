@@ -14,12 +14,30 @@ public class Server
 	private Hashtable<Socket, PrintWriter> outputStreams = new Hashtable<Socket, PrintWriter>();
 	ServerUI srvUI ;
 	QueueDB queueDb;
+	TopicsDB topicsDb;
 	private Hashtable<String, Integer> clients = new Hashtable<String, Integer>();
 	
 	public Server( int port ) throws IOException {
 		    srvUI = new ServerUI("localhost",port);
 		    queueDb = new QueueDB();
+		    topicsDb = new TopicsDB();
 		    srvUI.start();
+		    
+		    Thread topicDbCleaner = new Thread(){
+		    	@Override
+		    	public void run(){
+		    		while(true){
+		    			topicsDb.cleanOld();
+			    		srvUI.appendToChatBox("Cleaned TopicDB");
+			    		try{
+			    			this.sleep(30000);
+			    		}
+			    		catch(InterruptedException e){}
+		    		}
+		    	}
+		    };
+		    topicDbCleaner.start();
+		    
 			listen( port );
 		}
 	
@@ -37,7 +55,7 @@ public class Server
 
 		   outputStreams.put( s, out );
 
-		   new ServerThread( this, srvUI, s, queueDb);
+		   new ServerThread( this, srvUI, s, queueDb, topicsDb);
 	   }
    }	
 

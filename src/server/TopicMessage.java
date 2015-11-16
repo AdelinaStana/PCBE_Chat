@@ -3,13 +3,14 @@ package server;
 public class TopicMessage extends Message
 {
 
-	  private String content , topic , time , type;
+	  private String content , topic , type;
+	  private long time;
 	  
-	  public TopicMessage(String topic , String time, String content)
+	  public TopicMessage(String topic , String content)
 	  {
 		  this.content  = content ;
 		  this.topic    = topic;
-		  this.time     = time;
+		  this.time     = System.currentTimeMillis() / 1000L;
 		  this.type     = "Topic";
 		  
 	  }
@@ -19,7 +20,7 @@ public class TopicMessage extends Message
 			return this.content;
 	  }
 		  
-	  public String getTime()
+	  public long getTime()
 	  {
 		  return this.time;
 	  }

@@ -11,11 +11,10 @@ public class Server
 {
 
 	private ServerSocket ss;
-	private Hashtable<Socket, PrintWriter> outputStreams = new Hashtable<Socket, PrintWriter>();
+	private LinkedList<ClientStreams> clientsStreams = new LinkedList<ClientStreams>();
 	ServerUI srvUI ;
 	QueueDB queueDb;
 	TopicsDB topicsDb;
-	private Hashtable<String, Integer> clients = new Hashtable<String, Integer>();
 	private static boolean isServer = false;
 	
 	public Server( int port ) throws IOException {
@@ -69,112 +68,144 @@ public class Server
 
 		   PrintWriter out = new PrintWriter(s.getOutputStream());
 
-		   outputStreams.put( s, out );
+		   ClientStreams cs = new ClientStreams();
+		   cs.setSocket(s);
+		   cs.setPrintWriter(out);
+		   clientsStreams.add(cs);
+		   cs=null;
 
 		   new ServerThread( this, srvUI, s, queueDb, topicsDb);
 	   }
    }	
 
-   	
-     Enumeration<PrintWriter> getOutputStreams() {
-   			return outputStreams.elements();
-   			}
-   	
-
-   		void sendToAll( String message ) {
-   			synchronized( outputStreams ) {
-            
-   			for (Enumeration<PrintWriter> e = getOutputStreams(); e.hasMoreElements(); ) {
-   				PrintWriter out = (PrintWriter)e.nextElement();
-   				out.println( message );
-	   			out.flush();
-   				}
-   			 }
-	         }
-   		
-   		void sendToSomeone(String message , String reciver)
-   		{
-   			int dest = getReciverPort(reciver);
-   			
-   			synchronized( outputStreams ) {
-   				Set<Entry<String, Integer>> set = clients.entrySet();
-   			    Iterator<Entry<String, Integer>> it = set.iterator();
-   			    
-   			    Set<Entry<Socket, PrintWriter>> set1 = outputStreams.entrySet();
-			    Iterator<Entry<Socket, PrintWriter>> it1 = set1.iterator();
-   			    
-   			    while (it.hasNext()) {
-   			      Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
-	   			   while (it1.hasNext()) {
-	    			      Map.Entry<Socket, PrintWriter> entry1 = (Map.Entry<Socket, PrintWriter>) it1.next();
-	    			      int cltPort = entry1.getKey().getPort();
-	    			      if(cltPort == dest)
-	    			      {   PrintWriter out = entry1.getValue();
-	    			    	   out.println( message );
-	    			   		   out.flush();
-	    			      }
-	    			    }
-   			     }
-   			    }
-   		}
-   		
-	private int getReciverPort(String reciver) 
-	    { 
-		Set<Entry<String, Integer>> set = clients.entrySet();
-	    Iterator<Entry<String, Integer>> it = set.iterator();
-	    
-	    while (it.hasNext()) {
-	      Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
-	      if(entry.getKey().equals(reciver))
-	      {
-	    	  return (int) entry.getValue();
-	      }
-	    }
-	    return -1 ;
-		}
-
-	void removeConnection( Socket s ) 
-	{
-	synchronized( outputStreams )
-	{
-		srvUI.appendToChatBox( "Removing connection to "+s );
-		outputStreams.remove( s );
+   void sendToAll( String message ) {
+			synchronized( clientsStreams ) {
+       
+			ListIterator<ClientStreams> listIterator = clientsStreams.listIterator();
+        while (listIterator.hasNext()) {
+        	ClientStreams cs = listIterator.next();
+        	PrintWriter out = cs.getPrintWriter();
+        	out.println(message);
+        	out.flush();
+            }	
+			}
+     }
 		
-		try {
-			s.close();
-		} catch( IOException ie ) {
-		srvUI.appendToChatBox( "Error closing "+s );
-		ie.printStackTrace();
-		}
-		}
-	}
-
-	public void register(String name, int portC)
-	{
-		if(!clients.containsKey(name))
+		void sendToSomeone(String message , String reciver)
 		{
-		clients.put(name, portC);
+			synchronized( clientsStreams ) {
+	            //System.out.println(reciver);
+	   			ListIterator<ClientStreams> listIterator = clientsStreams.listIterator();
+	 	        while (listIterator.hasNext()) {
+	 	        	ClientStreams cs = listIterator.next();
+	 	            //System.out.println(cs.getName());
+	 	        	if((cs.getName()).equals(reciver))
+	 	        	{
+	 	        	PrintWriter out = cs.getPrintWriter();
+	 	        	out.println(message);
+	 	        	out.flush();
+	 	        	}
+	 	            }	
+	   			}
 		}
-		else
-		{ 
-			clients.put(name+"1",portC);
-			sendToSomeone("EXIT",name+"1");
-			int recvPort = portC;
-			    
-		    Set<Entry<Socket, PrintWriter>> set = outputStreams.entrySet();
-		    Iterator<Entry<Socket, PrintWriter>> it = set.iterator();
-			    
-			    while (it.hasNext()) {
-			    	Map.Entry<Socket, PrintWriter> entry = (Map.Entry<Socket, PrintWriter>) it.next();
-			    	if(entry.getKey().getPort() == recvPort)
-			    	{
-			    		System.out.println(entry.getKey());
-			    		removeConnection(entry.getKey());
-			    	}
-			    		
-			    }	    
-	    }
-			
-    }
+		
+void removeConnection( Socket s ) 
+{
+synchronized( clientsStreams )
+{
+	srvUI.appendToChatBox( "Removing connection to "+s );
 	
+	ListIterator<ClientStreams> listIterator = clientsStreams.listIterator();
+	int i = 0;
+       while (listIterator.hasNext()) {
+       	ClientStreams cs = listIterator.next();
+       	if(cs.getSocket() == s)
+       	{
+       		clientsStreams.remove(i);
+       	}
+       	i++;
+           }	
+	
+	try {
+		s.close();
+	} catch( IOException ie ) {
+	srvUI.appendToChatBox( "Error closing "+s );
+	ie.printStackTrace();
+	}
+	}
+}
+
+public void register(String name, int portC)
+{
+	boolean flag = false;
+	synchronized( clientsStreams )
+	{
+	
+	ListIterator<ClientStreams> listIterator = clientsStreams.listIterator();
+   while (listIterator.hasNext()) {
+   	ClientStreams cs = listIterator.next();
+   	if( (cs.getName()!=null) && ( (cs.getName()).equals(name)))
+   	{
+          flag=true;
+   	}
+       }	
+	
+	if(!flag)
+	{
+		ListIterator<ClientStreams> listIterator1 = clientsStreams.listIterator();
+       int i = 0;
+		while (listIterator1.hasNext()) {
+       	ClientStreams cs = listIterator1.next();
+		    Socket s = cs.getSocket();
+       	if(s.getPort() == portC)
+       	{
+              ClientStreams cs_ = new ClientStreams();
+              cs_.setName(name);
+              cs_.setPort(portC);
+              cs_.setPrintWriter(cs.getPrintWriter());
+              cs_.setSocket(cs.getSocket());
+              clientsStreams.remove(i);
+              clientsStreams.add(cs_);
+       	}
+       	i++;
+           }			
+	}
+	else
+	{ 
+		name = name+"1";
+		int i=0;
+		listIterator = clientsStreams.listIterator();
+       while (listIterator.hasNext()) {
+       	ClientStreams cs = listIterator.next();
+       	if((cs.getSocket()).getPort() == portC)
+       	{
+              ClientStreams cs_ = new ClientStreams();
+              cs_.setName(name);
+              cs_.setPort(portC);
+              cs_.setPrintWriter(cs.getPrintWriter());
+              clientsStreams.remove(i);
+              clientsStreams.add(cs_);
+              
+         	}
+       	i++;
+         }
+       
+		sendToSomeone("EXIT",name);
+		
+		listIterator = clientsStreams.listIterator();
+       while (listIterator.hasNext()) {
+       	ClientStreams cs = listIterator.next();
+       	if((cs.getName()).equals(name))
+       	{
+       		clientsStreams.remove(i);
+              
+         	}
+       	i++;
+         }
+	        
+   }
+		
+}
+}
+
 }

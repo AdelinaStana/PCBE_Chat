@@ -16,9 +16,10 @@ public class Server
 	QueueDB queueDb;
 	TopicsDB topicsDb;
 	private Hashtable<String, Integer> clients = new Hashtable<String, Integer>();
+	private static boolean isServer = false;
 	
 	public Server( int port ) throws IOException {
-		    srvUI = new ServerUI("localhost",port);
+			srvUI = new ServerUI("localhost",port);
 		    queueDb = new QueueDB();
 		    topicsDb = new TopicsDB();
 		    srvUI.start();
@@ -38,8 +39,23 @@ public class Server
 		    };
 		    topicDbCleaner.start();
 		    
+		    try{
 			listen( port );
-		}
+		    }
+		    catch(BindException e){
+		    	srvUI.appendToChatBox("Sorry, port " + port + " is in use.");
+		    	throw e;
+		    }
+	}
+	
+/*	public synchronized static Server getServer(int port) throws IllegalStateException, IOException{
+			if(isServer == null){
+			isServer = new Server(port);
+			return isServer;}
+			else
+			throw new IllegalStateException("Already instantiated");
+			
+	}*/
 	
    private void listen( int port ) throws IOException {
 	   

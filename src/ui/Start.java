@@ -1,6 +1,7 @@
 package ui;
 
 import java.io.*;
+import java.net.BindException;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -152,6 +153,7 @@ public class Start
             public void actionPerformed(ActionEvent e) {
             	 if (e.getActionCommand().equals("connect")) {
                      connect = true ;
+                     mainFrame.setVisible(false);
                   }
               
             }
@@ -202,12 +204,16 @@ public class Start
 
 	    	  if(connect)
 	    	  {	 if(isHost)
-		    	  {	
-		    		 new Server(port) ;
-		    		 break ;
-		    	  }
-		    	  else
 		    	  {
+	    		  try{
+	    			  new Server(port);
+		    	  }
+		 		    catch(BindException e){
+				    	break;
+				    }
+		    	  }
+		    	  
+		    	  else {
 		    		  new Client(name,port,hostIP,topics);
 		    		  break ;
 		    	  }
@@ -217,5 +223,3 @@ public class Start
 	      			
 	}
 }
-
-

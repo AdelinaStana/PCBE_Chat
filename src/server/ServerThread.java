@@ -44,12 +44,16 @@ public class ServerThread extends Thread
 	  			  if (msg.getType() == "Queue")
 	  			  {
 	  				  queueDb.push((QueueMessage) msg);
-	  				  server.sendToSomeone(name + " : " + msg.getContent(), msg.getReciver());
+	  				  // async push and send (breaks the thread if needed)
+	  				  QueueMessage msgToSend = queueDb.pull();
+	  				  
+	  				  server.sendToSomeone(name + " : " + msgToSend.getContent(), msgToSend.getReciver());
 	  				  srvUI.appendToChatBox( "QueueDB size: "+ queueDb.getSize() );
 	  			  }
 	  			  else if(msg.getType() == "Topic")
 	  			  {
-	  				  topicsDb.push((TopicMessage) msg);
+	  				  // atomic push to queue and send (fire and forget, queue cleanup will take place)
+	  				  TopicMessage msgToSend = topicsDb.pushpull((TopicMessage) msg);
 	  				  // server.sendToAll(name + " : " + msg.getContent());
 	  				  
 	  			  }

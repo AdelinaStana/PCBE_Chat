@@ -7,21 +7,27 @@ public class QueueDB
 	private static LinkedList<QueueMessage> queue = new LinkedList<QueueMessage>();
 	private static int MAX_LENGHT = 200;
 
-	public synchronized String getContent() 
+	public QueueMessage pull() 
 	{	
-		QueueMessage msg = queue.getFirst();
-		queue.removeFirst();
-		return msg.getContent();
+		synchronized (queue) {
+			QueueMessage msg = queue.getFirst();
+			queue.removeFirst();
+			return msg;
+		}
 	}
 
-	public synchronized void push(QueueMessage msg)
+	public void push(QueueMessage msg)
 	{
-		if(queue.size()<=MAX_LENGHT)
-			queue.add(msg);
+		synchronized (queue) {		
+			if(queue.size()<=MAX_LENGHT)
+				queue.addFirst(msg);
+		}
 	}
 	
 	public int getSize(){
-		return queue.size();
+		synchronized (queue) {
+			return queue.size();			
+		}
 	}
  
 }

@@ -35,7 +35,7 @@ public class Server
 
 		   outputStreams.put( s, out );
 
-		   new ServerThread( this, s , srvUI);
+		   new ServerThread( this, s );
 	   }
    }	
 

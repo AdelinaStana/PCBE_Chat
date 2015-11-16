@@ -8,12 +8,10 @@ public class ServerThread extends Thread
 {
 	private Server server;
 	private Socket socket;
-	private ServerUI srvUI;
 	
-	public ServerThread( Server server, Socket socket , ServerUI srvUI) {
+	public ServerThread( Server server, Socket socket ) {
 	this.server = server;
 	this.socket = socket;
-	this.srvUI  = srvUI;
 	start();
 	}
 	

@@ -64,7 +64,7 @@ public class Server
 	   srvUI.appendToChatBox( "Listening on "+ss );
 	
 	   
-	   while (true) {
+	   while (srvUI.getConnectionStatus()) {
 		available.acquire();
 		   Socket s = ss.accept();
 		   srvUI.appendToChatBox( "Connection from "+s );
@@ -81,8 +81,26 @@ public class Server
 		   
 		available.release();  
 	   }
+	   exitToAll();
    }	
 
+   void exitToAll() {
+			synchronized( clientsStreams ) {
+       
+			ListIterator<ClientStreams> listIterator = clientsStreams.listIterator();
+        while (listIterator.hasNext()) {
+        	ClientStreams cs = listIterator.next();
+        	
+        	PrintWriter out = cs.getPrintWriter();
+        	out.println("EXIT");
+        	out.flush();
+        	}
+            	
+			}
+	   exitToAll();
+   }	
+
+   
    void sendToAll( String message , String topic) {
 			synchronized( clientsStreams ) {
        

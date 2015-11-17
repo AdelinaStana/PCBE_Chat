@@ -3,7 +3,7 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.concurrent.Semaphore;
 
 import ui.ServerUI;
 
@@ -16,8 +16,9 @@ public class Server
 	QueueDB queueDb;
 	TopicsDB topicsDb;
 	private static boolean isServer = false;
+	Semaphore available = new Semaphore(1, true);
 	
-	public Server( int port ) throws IOException {
+	public Server( int port ) throws IOException, InterruptedException {
 			srvUI = new ServerUI("localhost",port);
 		    queueDb = new QueueDB();
 		    topicsDb = new TopicsDB();
@@ -56,13 +57,15 @@ public class Server
 			
 	}*/
 	
-   private void listen( int port ) throws IOException {
+   private void listen( int port ) throws IOException, InterruptedException {
 	   
 	   InetAddress addr = InetAddress.getByName("localhost");
 	   ss = new ServerSocket(1234,20,addr);
 	   srvUI.appendToChatBox( "Listening on "+ss );
-
+	
+	   
 	   while (true) {
+		available.acquire();
 		   Socket s = ss.accept();
 		   srvUI.appendToChatBox( "Connection from "+s );
 
@@ -75,6 +78,8 @@ public class Server
 		   cs=null;
 
 		   new ServerThread( this, srvUI, s, queueDb, topicsDb);
+		   
+		available.release();  
 	   }
    }	
 

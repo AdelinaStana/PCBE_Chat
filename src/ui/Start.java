@@ -15,7 +15,7 @@ public class Start
 
    public static String hostIP = "localhost";
    public static String name = "Server";
-   public static String topics = "";
+   public static String topics = "#bubu";
    public static int port = 1234;
    public static boolean isHost = true;
    public static boolean connect = false;

@@ -189,7 +189,7 @@ public class Start
       mainFrame.setVisible(true);
    }
 
-	public static void main(String args[]) throws IOException 
+	public static void main(String args[]) throws IOException, InterruptedException 
 	{
 	
 	      initGUI();

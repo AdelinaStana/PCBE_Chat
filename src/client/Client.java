@@ -67,14 +67,14 @@ public class Client implements Runnable {
 	    	  {
 			 try {
 				if(in.ready())
-						  { System.out.println(msg);
+						  { 
 							  msg = in.readLine();
 							  if(!msg.equals("EXIT") && !msg.equals("EXIT_ALL"))
 							  {
 							  cltUI.send(msg+"\n");
 							  }
 							  else if (msg.equals("EXIT"))
-							  {
+							  {	  
 						      cltUI.changeStatus(1);
 						      cltUI.send("Your name is taken\n");
 						      break;
@@ -92,9 +92,9 @@ public class Client implements Runnable {
 				}
 	    	  }
 			}
-	
+	          
 	        System.out.println("bye");
-	        try {
+	        try {		  
 		        socket.close();
 				in.close();
 		        out.close();

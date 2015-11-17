@@ -83,10 +83,6 @@ public class Server
 		   
 		available.release();  
 	   }
-<<<<<<< Updated upstream
-		exitToAll();
-=======
->>>>>>> Stashed changes
    }	
 
    void exitToAll() {

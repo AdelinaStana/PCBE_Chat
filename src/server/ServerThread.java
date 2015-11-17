@@ -32,6 +32,7 @@ public class ServerThread extends Thread
       {
       	try {
   			if ((s = in.readLine() )!= null) 
+  			{if(!s.equals("Bye"))
   			{
   			  if(s.contains("My name is :"))
   				{
@@ -63,9 +64,14 @@ public class ServerThread extends Thread
 	  				  srvUI.appendToChatBox( "TopicsDB size: "+ topicsDb.getSize() );
 	  				  
 	  			  }
-  			  }
-  			  
+	  			  
+  				}
   			}
+			else {
+  				server.removeConnection( socket );
+			}
+  	      }
+  			  
   		} catch (IOException e) {
   			e.printStackTrace();
   		}
@@ -79,7 +85,7 @@ public class ServerThread extends Thread
 			ie.printStackTrace();
 		} finally {
 
-				server.removeConnection( socket );
+				//server.removeConnection( socket );
 		}
 	}
 }

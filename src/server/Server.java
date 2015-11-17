@@ -29,6 +29,7 @@ public class Server
 			    }
 			    catch(BindException e){
 			    	srvUI.appendToChatBox("Sorry, port " + port + " is in use.");
+			    	srvUI.changeStatus(1);
 			    	throw e;
 			    }
 		    

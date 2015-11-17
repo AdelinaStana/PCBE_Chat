@@ -27,9 +27,9 @@ public class ClientStreams {
 		this.port = port;
 	}
 	
-	public synchronized void setTopics(String list)
+	public synchronized void setTopics(LinkedList<String> topics)
 	{
-		
+		this.topicList = topics;
 	}
 	
 	public synchronized String getName()
@@ -49,7 +49,7 @@ public class ClientStreams {
 	
 	public synchronized LinkedList<String> getTopics()
 	{
-		return topicList;
+		return this.topicList;
 	}
 	
 	public synchronized void setPrintWriter(PrintWriter out)

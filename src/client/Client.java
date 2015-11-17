@@ -40,14 +40,13 @@ public class Client implements Runnable {
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream());
 	} catch (IOException e1) {
-		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	}
 
 		ClientUI cltUI = new ClientUI(name , port , "localhost");
 		cltUI.start();
 		
-		out.println("My name is :"+name);
+		out.println("My name is :"+name+":"+topics);
 		out.flush();
 		  
 	     while (cltUI.getConnectionStatus()) 

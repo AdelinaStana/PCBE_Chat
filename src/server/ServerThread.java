@@ -26,7 +26,7 @@ public class ServerThread extends Thread
 	  BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
       String s;
       Protocol protocol = new Protocol() ;
-      String name = null ;
+      String name = null , topics=null;
 
       while(true)
       {
@@ -36,7 +36,8 @@ public class ServerThread extends Thread
   			  if(s.contains("My name is :"))
   				{
   					name = s.split(":")[1];
-  					server.register(name,socket.getPort());
+  					topics = s.split(":")[2];
+  					server.register(name,socket.getPort(),topics);
   				}
   				else
   				{ 
@@ -54,7 +55,7 @@ public class ServerThread extends Thread
 	  			  {
 	  				  // atomic push to queue and send (fire and forget, queue cleanup will take place)
 	  				  TopicMessage msgToSend = topicsDb.pushpull((TopicMessage) msg);
-	  				  // server.sendToAll(name + " : " + msg.getContent());
+	  				  server.sendToAll(name + " : " + msgToSend.getContent(), msgToSend.getTopic());
 	  				  
 	  			  }
   			  }

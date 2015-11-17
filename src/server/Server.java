@@ -78,15 +78,16 @@ public class Server
 	   }
    }	
 
-   void sendToAll( String message ) {
+   void sendToAll( String message , String topic) {
 			synchronized( clientsStreams ) {
        
 			ListIterator<ClientStreams> listIterator = clientsStreams.listIterator();
         while (listIterator.hasNext()) {
         	ClientStreams cs = listIterator.next();
+        	if((cs.getTopics()).contains(topic)){
         	PrintWriter out = cs.getPrintWriter();
         	out.println(message);
-        	out.flush();
+        	out.flush();}
             }	
 			}
      }
@@ -135,9 +136,24 @@ synchronized( clientsStreams )
 	}
 }
 
-public void register(String name, int portC)
+public LinkedList<String> splitTopics(String topics_)
+{
+	LinkedList<String> topics = new LinkedList<String>();
+	String[] arr = topics_.split("#");
+	
+	for(int i=0;i<arr.length;i++)
+	{
+		topics.add(arr[i]);
+	}
+	return topics;
+	
+}
+
+public void register(String name, int portC,String topics_)
 {
 	boolean flag = false;
+	LinkedList<String> topics = splitTopics(topics_);
+	
 	synchronized( clientsStreams )
 	{
 	
@@ -164,6 +180,7 @@ public void register(String name, int portC)
               cs_.setPort(portC);
               cs_.setPrintWriter(cs.getPrintWriter());
               cs_.setSocket(cs.getSocket());
+              cs_.setTopics(topics);
               clientsStreams.remove(i);
               clientsStreams.add(cs_);
        	}
@@ -183,6 +200,7 @@ public void register(String name, int portC)
               cs_.setName(name);
               cs_.setPort(portC);
               cs_.setPrintWriter(cs.getPrintWriter());
+              cs_.setTopics(topics);
               clientsStreams.remove(i);
               clientsStreams.add(cs_);
               

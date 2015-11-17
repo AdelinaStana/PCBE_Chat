@@ -186,7 +186,7 @@ private static JPanel initOptionsPane() {
    }
   
   public boolean getConnectionStatus()
-  {
+  {System.out.println(connectionStatus);
 	  if(connectionStatus == 4 )
 	  {
 		  return true ;

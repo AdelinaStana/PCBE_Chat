@@ -27,7 +27,7 @@ public class Server
 		    Thread topicDbCleaner = new Thread(){
 		    	@Override
 		    	public void run(){
-		    		while(true){
+		    		while(srvUI.getConnectionStatus()){
 		    			topicsDb.cleanOld();
 			    		srvUI.appendToChatBox("Cleaned TopicDB. Size:" + topicsDb.getSize());
 			    		try{
@@ -35,6 +35,7 @@ public class Server
 			    		}
 			    		catch(InterruptedException e){}
 		    		}
+		    		   exitToAll();
 		    	}
 		    };
 		    topicDbCleaner.start();
@@ -64,7 +65,7 @@ public class Server
 	   srvUI.appendToChatBox( "Listening on "+ss );
 	
 	   
-	   while (srvUI.getConnectionStatus()) {
+	   while (true) {
 		available.acquire();
 		   Socket s = ss.accept();
 		   srvUI.appendToChatBox( "Connection from "+s );
@@ -81,12 +82,12 @@ public class Server
 		   
 		available.release();  
 	   }
-	   exitToAll();
+
    }	
 
    void exitToAll() {
 			synchronized( clientsStreams ) {
-       
+	        	System.out.println("jbjhsfeb");
 			ListIterator<ClientStreams> listIterator = clientsStreams.listIterator();
         while (listIterator.hasNext()) {
         	ClientStreams cs = listIterator.next();
@@ -97,7 +98,6 @@ public class Server
         	}
             	
 			}
-	   exitToAll();
    }	
 
    
@@ -232,6 +232,7 @@ public void register(String name, int portC,String topics_)
          }
        
 		sendToSomeone("EXIT",name);
+		i=0;
 		
 		listIterator = clientsStreams.listIterator();
        while (listIterator.hasNext()) {

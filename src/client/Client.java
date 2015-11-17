@@ -67,7 +67,7 @@ public class Client implements Runnable {
 	    	  {
 			 try {
 				if(in.ready())
-						  { 
+						  { System.out.println(msg);
 							  msg = in.readLine();
 							  if(!msg.equals("EXIT"))
 							  {
@@ -77,6 +77,7 @@ public class Client implements Runnable {
 							  {
 						      cltUI.send("Your name is taken!\n");
 						      cltUI.changeStatus(1);
+						      break;
 							  }
 						  }
 				} catch (IOException e) {

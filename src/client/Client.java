@@ -69,16 +69,23 @@ public class Client implements Runnable {
 				if(in.ready())
 						  { System.out.println(msg);
 							  msg = in.readLine();
-							  if(!msg.equals("EXIT"))
+							  if(!msg.equals("EXIT") && !msg.equals("EXIT_ALL"))
 							  {
 							  cltUI.send(msg+"\n");
 							  }
-							  else
+							  else if (msg.equals("EXIT"))
 							  {
-						      cltUI.send("Your name is taken!\n");
 						      cltUI.changeStatus(1);
+						      cltUI.send("Your name is taken\n");
 						      break;
 							  }
+							  else if(msg.equals("EXIT_ALL"))
+							  {
+							  cltUI.changeStatus(1);
+							  cltUI.send("Server is closed \n");
+							  break;
+							  }
+								  
 						  }
 				} catch (IOException e) {
 					e.printStackTrace();

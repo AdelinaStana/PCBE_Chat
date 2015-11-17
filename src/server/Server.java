@@ -35,6 +35,7 @@ public class Server
 			    		}
 			    		catch(InterruptedException e){}
 		    		}
+
 		    		   exitToAll();
 		    	}
 		    };
@@ -82,7 +83,10 @@ public class Server
 		   
 		available.release();  
 	   }
-
+<<<<<<< Updated upstream
+		exitToAll();
+=======
+>>>>>>> Stashed changes
    }	
 
    void exitToAll() {
@@ -93,7 +97,7 @@ public class Server
         	ClientStreams cs = listIterator.next();
         	
         	PrintWriter out = cs.getPrintWriter();
-        	out.println("EXIT");
+        	out.println("EXIT_ALL");
         	out.flush();
         	}
             	

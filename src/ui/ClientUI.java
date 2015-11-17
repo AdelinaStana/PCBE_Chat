@@ -159,7 +159,7 @@ private static JPanel initOptionsPane() {
 
 
       mainFrame = new JFrame("Chat ~ "+name);
-      mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       mainFrame.setContentPane(mainPane);
       mainFrame.setIconImage(new ImageIcon("Jface.png").getImage());
       mainFrame.setResizable(false);
@@ -167,8 +167,23 @@ private static JPanel initOptionsPane() {
       mainFrame.setLocation(200, 200);
       mainFrame.pack();
       mainFrame.setVisible(true);
-      
       changeStatus(4);
+      
+      mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+    	    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+    	            if (!disconnectButton.isEnabled()){
+    	            try { 
+    		              Thread.sleep(10);
+    		           }
+    		           catch (InterruptedException e) {}
+    	            mainFrame.setVisible(false);
+    	            mainFrame.dispose();
+    	        	System.exit(0);
+    	        }
+    	    }
+    	    });
+      
+      
    }
    
    public static void appendToChatBox(String s) {

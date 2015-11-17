@@ -29,9 +29,9 @@ public class Server
 		    	public void run(){
 		    		while(true){
 		    			topicsDb.cleanOld();
-			    		srvUI.appendToChatBox("Cleaned TopicDB");
+			    		srvUI.appendToChatBox("Cleaned TopicDB. Size:" + topicsDb.getSize());
 			    		try{
-			    			this.sleep(30000);
+			    			this.sleep(3000);
 			    		}
 			    		catch(InterruptedException e){}
 		    		}

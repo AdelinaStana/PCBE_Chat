@@ -4,13 +4,14 @@ public class TopicMessage extends Message
 {
 
 	  private String content , topic , type;
-	  private long time;
+	  private long time, timeCreated;
 	  
-	  public TopicMessage(String topic , String content)
+	  public TopicMessage(String topic , String time, String content)
 	  {
 		  this.content  = content ;
 		  this.topic    = topic;
-		  this.time     = System.currentTimeMillis() / 1000L;
+		  this.time     = Long.parseLong(time);
+		  this.timeCreated = System.currentTimeMillis() / 1000L;
 		  this.type     = "Topic";
 		  
 	  }
@@ -23,6 +24,11 @@ public class TopicMessage extends Message
 	  public long getTime()
 	  {
 		  return this.time;
+	  }
+
+	  public long getTimeCreated()
+	  {
+		  return this.timeCreated;
 	  }
 	  
 	  public String getType()

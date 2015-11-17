@@ -36,8 +36,12 @@ public class ServerThread extends Thread
   			  if(s.contains("My name is :"))
   				{
   					name = s.split(":")[1];
-  					topics = s.split(":")[2];
-  					server.register(name,socket.getPort(),topics);
+  					if(s.split(":").length >= 3){
+  						topics = s.split(":")[2];
+  						server.register(name,socket.getPort(),topics);
+  					}
+  					else
+  						server.register(name,socket.getPort(),"");
   				}
   				else
   				{ 
@@ -56,6 +60,7 @@ public class ServerThread extends Thread
 	  				  // atomic push to queue and send (fire and forget, queue cleanup will take place)
 	  				  TopicMessage msgToSend = topicsDb.pushpull((TopicMessage) msg);
 	  				  server.sendToAll(name + " : " + msgToSend.getContent(), msgToSend.getTopic());
+	  				  srvUI.appendToChatBox( "TopicsDB size: "+ topicsDb.getSize() );
 	  				  
 	  			  }
   			  }

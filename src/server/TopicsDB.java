@@ -13,14 +13,20 @@ public class TopicsDB
 			return cont;
 		}
 	}
-		
+
 	public void cleanOld(){
 		synchronized (contents){
 			long now = System.currentTimeMillis() / 1000L;
 			for(int i=0; i < contents.size(); i++){
-				if(now - contents.get(i).getTime() > 180000)
+				if((now - contents.get(i).getTimeCreated()) >= contents.get(i).getTime())
 					contents.remove(i);
 			}
+		}
+	}
+	
+	public int getSize(){
+		synchronized (contents) {
+			return contents.size();			
 		}
 	}
 }

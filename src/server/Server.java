@@ -24,6 +24,14 @@ public class Server
 		    topicsDb = new TopicsDB();
 		    srvUI.start();
 		    
+		    try{
+				listen( port );
+			    }
+			    catch(BindException e){
+			    	srvUI.appendToChatBox("Sorry, port " + port + " is in use.");
+			    	throw e;
+			    }
+		    
 		    Thread topicDbCleaner = new Thread(){
 		    	@Override
 		    	public void run(){
@@ -41,13 +49,7 @@ public class Server
 		    };
 		    topicDbCleaner.start();
 		    
-		    try{
-			listen( port );
-		    }
-		    catch(BindException e){
-		    	srvUI.appendToChatBox("Sorry, port " + port + " is in use.");
-		    	throw e;
-		    }
+		   
 	}
 	
 /*	public synchronized static Server getServer(int port) throws IllegalStateException, IOException{
